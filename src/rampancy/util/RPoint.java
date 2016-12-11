@@ -1,6 +1,5 @@
 package rampancy.util;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Ellipse2D;
@@ -9,17 +8,9 @@ import robocode.util.Utils;
 
 @SuppressWarnings("serial")
 public class RPoint extends Point2D.Double implements RDrawable {
-    public static final Color DEFAULT_COLOR = Color.WHITE;
-
-    public Color color;
 
     public RPoint(double x, double y) {
-        this(x, y, DEFAULT_COLOR);
-    }
-
-    public RPoint(double x, double y, Color color) {
         super(x, y);
-        this.color = color;
     }
 
     public RPoint clone() {
@@ -44,9 +35,6 @@ public class RPoint extends Point2D.Double implements RDrawable {
     }
 
     public void draw(Graphics2D g) {
-        Color old = g.getColor();
-        g.setColor(this.color);
         g.fill(new Ellipse2D.Double(x - 1, y - 1, 3.0, 3.0));
-        g.setColor(old);
     }
 }
