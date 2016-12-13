@@ -6,11 +6,11 @@ import java.awt.geom.Rectangle2D;
 @SuppressWarnings("serial")
 public class RRect extends Rectangle2D.Double implements RDrawable {
     public RRect(RPoint center, double radius) {
-        this(center.x, center.y, radius * 2, radius * 2);
+        this(center.x - radius, center.y - radius, radius * 2, radius * 2);
     }
 
     public RRect(RPoint center, double width, double height) {
-        this(center.x, center.y, width, height);
+        this(center.x - width / 2.0, center.y - height / 2.0, width, height);
     }
 
     public RRect(double x, double y, double width, double height) {

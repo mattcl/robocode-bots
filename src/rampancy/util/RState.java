@@ -18,6 +18,7 @@ public class RState {
     public double deltaV;
     public double energy;
     public int directionTraveling;
+    public long time;
 
     public RState() { }
 
@@ -27,22 +28,24 @@ public class RState {
         this.heading     = robot.getHeadingRadians();
         this.velocity    = robot.getVelocity();
         this.energy      = robot.getEnergy();
+        this.time        = e.getTime();
 
-        this.deltaH            = lastState == null ? 0 : heading - lastState.heading;
-        this.deltaV            = lastState == null ? 0 : velocity - lastState.velocity;
+        this.deltaH      = lastState == null ? 0 : heading - lastState.heading;
+        this.deltaV      = lastState == null ? 0 : velocity - lastState.velocity;
     }
 
-    public RState(RState referenceState, RState lastState, ScannedRobotEvent e) {
-        this.heading           = e.getHeadingRadians();
-        this.distance          = e.getDistance();
-        this.velocity          = e.getVelocity();
-        this.energy            = e.getEnergy();
-        this.absoluteBearing   = Utils.normalAbsoluteAngle(referenceState.heading + e.getBearingRadians());
-        this.lateralVelocity   = velocity * Math.sin(heading - absoluteBearing);
-        this.advancingVelocity = velocity * -1 * Math.cos(heading - absoluteBearing);
+    public RState(RampantRobot reference, RState lastState, ScannedRobotEvent e) {
+        this.heading            = e.getHeadingRadians();
+        this.distance           = e.getDistance();
+        this.velocity           = e.getVelocity();
+        this.energy             = e.getEnergy();
+        this.time               = e.getTime();
+        this.absoluteBearing    = Utils.normalAbsoluteAngle(reference.getHeadingRadians() + e.getBearingRadians());
+        this.lateralVelocity    = velocity * Math.sin(heading - absoluteBearing);
+        this.advancingVelocity  = velocity * -1 * Math.cos(heading - absoluteBearing);
         this.directionTraveling = lateralVelocity >= 0 ? 1 : -1;
 
-        this.location          = referenceState.location.projectTo(absoluteBearing, distance);
+        this.location          = reference.location().projectTo(absoluteBearing, distance);
         this.deltaH            = lastState == null ? 0 : heading - lastState.heading;
         this.deltaV            = lastState == null ? 0 : velocity - lastState.velocity;
     }
@@ -59,7 +62,8 @@ public class RState {
             state.deltaH,
             state.deltaV,
             state.energy,
-            state.directionTraveling
+            state.directionTraveling,
+            state.time
         );
     }
 
@@ -74,7 +78,8 @@ public class RState {
         double deltaH,
         double deltaV,
         double energy,
-        int directionTraveling
+        int directionTraveling,
+        long time
     ) {
         this.location           = location.clone();
         this.distance           = distance;
@@ -87,6 +92,7 @@ public class RState {
         this.deltaV             = deltaV;
         this.energy             = energy;
         this.directionTraveling = directionTraveling;
+        this.time               = time;
     }
 
     public RState clone() {
