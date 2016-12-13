@@ -3,6 +3,7 @@ package rampancy.util;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
+import rampancy.RampantRobot;
 
 public class RState {
 
@@ -19,6 +20,17 @@ public class RState {
     public int directionTraveling;
 
     public RState() { }
+
+    public RState(RampantRobot robot, ScannedRobotEvent e) {
+        RState lastState = robot.currentState();
+        this.location    = new RPoint(robot.getX(), robot.getY());
+        this.heading     = robot.getHeadingRadians();
+        this.velocity    = robot.getVelocity();
+        this.energy      = robot.getEnergy();
+
+        this.deltaH            = lastState == null ? 0 : heading - lastState.heading;
+        this.deltaV            = lastState == null ? 0 : velocity - lastState.velocity;
+    }
 
     public RState(RState referenceState, RState lastState, ScannedRobotEvent e) {
         this.heading           = e.getHeadingRadians();
