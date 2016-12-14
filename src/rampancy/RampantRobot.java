@@ -3,6 +3,8 @@ package rampancy;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
 
+import rampancy.gun.RGun;
+import rampancy.radar.RRadarManager;
 import rampancy.util.REnemy;
 import rampancy.util.REnemyManager;
 import rampancy.util.RPoint;
@@ -11,10 +13,11 @@ import rampancy.util.RStateful;
 
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
-import robocode.util.Utils;
 
 abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     protected static REnemyManager enemyManager;
+    protected static RRadarManager radarManager;
+    protected static RGun gun;
 
     protected LinkedList<RState> states;
 
@@ -28,7 +31,15 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         if (enemyManager == null) {
             enemyManager = new REnemyManager(this);
         }
+        if (radarManager == null) {
+            radarManager = new RRadarManager(this);
+        }
+        if (gun == null) {
+            gun = new RGun(this);
+        }
         enemyManager.updateReferenceBot(this);
+        radarManager.updateReferenceBot(this);
+        gun.updateReferenceBot(this);
     }
 
     public void run() {
@@ -52,24 +63,23 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     }
 
     public void doGun() {
-
+        if (gun != null) {
+            gun.execute();
+        }
     }
 
     public void doRadar() {
-
-        if (getRadarTurnRemaining() == 0.0) {
-            setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+        if (radarManager != null) {
+            radarManager.execute();
         }
-        scan();
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
         REnemy scannedEnemy = enemyManager.get(e.getName());
         scannedEnemy.updateState(e);
-
-        // TODO: move this?
-        double radarTurn = this.getHeadingRadians() + e.getBearingRadians() - this.getRadarHeadingRadians();
-        setTurnRadarRightRadians(2.0 * Utils.normalRelativeAngle(radarTurn));
+        if (radarManager != null) {
+            radarManager.update(scannedEnemy);
+        }
     }
 
     public void onPaint(Graphics2D g) {

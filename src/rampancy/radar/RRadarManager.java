@@ -2,10 +2,42 @@ package rampancy.radar;
 
 import java.util.HashMap;
 
-public class RRadarManager {
-    protected HashMap<String, RScan> scans;
+import rampancy.RampantRobot;
+import rampancy.util.REnemy;
+import rampancy.util.RState;
 
-    public RRadarManager() {
-        this.scans = new HashMap<String, RScan>();
+import robocode.util.Utils;
+
+public class RRadarManager {
+    protected HashMap<String, RState> scans;
+    protected RampantRobot referenceBot;
+
+    public RRadarManager(RampantRobot referenceBot) {
+        updateReferenceBot(referenceBot);
+    }
+
+    public void updateReferenceBot(RampantRobot referenceBot) {
+        this.referenceBot = referenceBot;
+        this.scans = new HashMap<String, RState>();
+    }
+
+    public void update(REnemy enemy) {
+        RState state = enemy.currentState();
+        if (state == null) {
+            return;
+        }
+        scans.put(enemy.name, state);
+    }
+
+    public void execute() {
+        if (scans.size() == 1) {
+            for (RState state : scans.values()) {
+                double bearing = referenceBot.location().absoluteBearingTo(state.location);
+                double radarTurn = bearing - referenceBot.getRadarHeadingRadians();
+                referenceBot.setTurnRadarRightRadians(1.99 * Utils.normalRelativeAngle(radarTurn));
+            }
+        } else if (referenceBot.getRadarTurnRemaining() == 0.0) {
+            referenceBot.setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+        }
     }
 }

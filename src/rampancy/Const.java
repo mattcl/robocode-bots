@@ -20,4 +20,5 @@ public final class Const {
 
     public static final double MAX_BULLET_POWER = Rules.MAX_BULLET_POWER;
     public static final double MIN_BULLET_POWER = Rules.MIN_BULLET_POWER;
+    public static final double MAX_BULLET_VELOCITY_BOUND = 20.0;
 }
