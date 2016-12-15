@@ -29,17 +29,17 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
 
     public void setup() {
         if (enemyManager == null) {
-            enemyManager = new REnemyManager(this);
-        }
-        if (radarManager == null) {
-            radarManager = new RRadarManager(this);
-        }
-        if (gunManager == null) {
-            gunManager = new RGunManager(this);
+            firstTimeSetup();
         }
         enemyManager.updateReferenceBot(this);
         radarManager.updateReferenceBot(this);
         gunManager.updateReferenceBot(this);
+    }
+
+    public void firstTimeSetup() {
+        enemyManager = new REnemyManager(this);
+        radarManager = new RRadarManager(this);
+        gunManager = new RGunManager(this);
     }
 
     public void run() {
@@ -89,6 +89,10 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     public void onPaint(Graphics2D g) {
         if (enemyManager != null) {
             enemyManager.draw(g);
+        }
+
+        if (gunManager != null) {
+            gunManager.draw(g);
         }
     }
 

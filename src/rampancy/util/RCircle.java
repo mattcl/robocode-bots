@@ -31,6 +31,7 @@ public class RCircle extends Ellipse2D.Double implements RDrawable {
 
     public void draw(Graphics2D g) {
         Color old = g.getColor();
+        g.setColor(color);
         if (filled) {
             g.fill(this);
         } else {

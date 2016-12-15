@@ -12,4 +12,5 @@ abstract public class RGun {
 
     abstract public String name();
     abstract public void update(REnemy enemy);
+    abstract public RFiringSolution firingSolution();
 }

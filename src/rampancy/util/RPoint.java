@@ -14,7 +14,7 @@ public class RPoint extends Point2D.Double implements RDrawable {
     }
 
     public RPoint clone() {
-        return (RPoint) this.clone();
+        return (RPoint) super.clone();
     }
 
     public RPoint projectTo(double angle, double distance) {

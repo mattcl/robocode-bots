@@ -1,14 +1,18 @@
 package rampancy.gun;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import rampancy.RampantRobot;
+import rampancy.util.RDrawable;
 import rampancy.util.REnemy;
 
 import robocode.Bullet;
+import robocode.util.Utils;
 
-public class RGunManager {
+public class RGunManager implements RDrawable {
     protected RampantRobot referenceBot;
     protected long fireTime;
     protected HashMap<String, RGun> guns;
@@ -27,6 +31,11 @@ public class RGunManager {
         this.fireTime = 0;
     }
 
+    public void addGun(RGun gun) {
+        this.guns.put(gun.name(), gun);
+        gun.updateReferenceBot(this.referenceBot);
+    }
+
     public void update(REnemy enemy) {
         for (RGun gun : guns.values()) {
             gun.update(enemy);
@@ -35,15 +44,48 @@ public class RGunManager {
 
     public void execute() {
         if (fireTime == referenceBot.getTime() && referenceBot.getGunTurnRemainingRadians() == 0) {
-            Bullet shot = referenceBot.setFireBullet(lockedSolution.power);
-            if (shot != null) {
-                RBullet bullet = new RBullet(shot, lockedSolution);
-                bullets.add(bullet);
+            if (lockedSolution != null) {
+                Bullet shot = referenceBot.setFireBullet(lockedSolution.power);
+                if (shot != null) {
+                    RBullet bullet = new RBullet(shot, lockedSolution);
+                    bullets.add(bullet);
+                    lockedSolution = null;
+                }
+            }
+        }
+        maybeLockFiringSolution();
+        updateBullets();
+    }
+
+    public void draw(Graphics2D g) {
+        for (RBullet bullet : bullets) {
+            bullet.draw(g);
+        }
+    }
+
+    protected void maybeLockFiringSolution() {
+        List<RFiringSolution> firingSolutions = new ArrayList<RFiringSolution>();
+        for (RGun gun : guns.values()) {
+            RFiringSolution solution = gun.firingSolution();
+            if (solution != null) {
+                firingSolutions.add(solution);
             }
         }
 
-        for (RBullet bullet : bullets) {
-
+        if (!firingSolutions.isEmpty()) {
+            this.lockedSolution = firingSolutions.get(0);
+            this.fireTime = this.referenceBot.getTime() + 1;
+            this.referenceBot.setTurnGunRightRadians(Utils.normalRelativeAngle(this.lockedSolution.firingAngle));
         }
+    }
+
+    protected void updateBullets() {
+        List<RBullet> inactive = new ArrayList<RBullet>();
+        for (RBullet bullet : bullets) {
+            if (!bullet.active()) {
+                inactive.add(bullet);
+            }
+        }
+        bullets.removeAll(inactive);
     }
 }

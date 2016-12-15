@@ -1,5 +1,6 @@
 package rampancy.gun;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
@@ -78,12 +79,15 @@ public class RCTGun extends RGun {
         }
 
         public void draw(Graphics2D g) {
+            Color old = g.getColor();
+            g.setColor(Color.white);
             for (RPoint p : locations) {
                 p.draw(g);
             }
 
             RPoint last = locations.get(locations.size() - 1);
             new RCircle(last, 2).draw(g);
+            g.setColor(old);
         }
     }
 }

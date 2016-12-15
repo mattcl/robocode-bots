@@ -34,7 +34,7 @@ public class RRadarManager {
             for (RState state : scans.values()) {
                 double bearing = referenceBot.location().absoluteBearingTo(state.location);
                 double radarTurn = bearing - referenceBot.getRadarHeadingRadians();
-                referenceBot.setTurnRadarRightRadians(1.99 * Utils.normalRelativeAngle(radarTurn));
+                referenceBot.setTurnRadarRightRadians(2.0 * Utils.normalRelativeAngle(radarTurn));
             }
         } else if (referenceBot.getRadarTurnRemaining() == 0.0) {
             referenceBot.setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
