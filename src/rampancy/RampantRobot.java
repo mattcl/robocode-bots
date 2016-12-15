@@ -3,7 +3,7 @@ package rampancy;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
 
-import rampancy.gun.RGun;
+import rampancy.gun.RGunManager;
 import rampancy.radar.RRadarManager;
 import rampancy.util.REnemy;
 import rampancy.util.REnemyManager;
@@ -17,7 +17,7 @@ import robocode.ScannedRobotEvent;
 abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     protected static REnemyManager enemyManager;
     protected static RRadarManager radarManager;
-    protected static RGun gun;
+    protected static RGunManager gunManager;
 
     protected LinkedList<RState> states;
 
@@ -34,12 +34,12 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         if (radarManager == null) {
             radarManager = new RRadarManager(this);
         }
-        if (gun == null) {
-            gun = new RGun(this);
+        if (gunManager == null) {
+            gunManager = new RGunManager(this);
         }
         enemyManager.updateReferenceBot(this);
         radarManager.updateReferenceBot(this);
-        gun.updateReferenceBot(this);
+        gunManager.updateReferenceBot(this);
     }
 
     public void run() {
@@ -63,8 +63,8 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     }
 
     public void doGun() {
-        if (gun != null) {
-            gun.execute();
+        if (gunManager != null) {
+            gunManager.execute();
         }
     }
 
@@ -79,6 +79,10 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         scannedEnemy.updateState(e);
         if (radarManager != null) {
             radarManager.update(scannedEnemy);
+        }
+
+        if (gunManager != null) {
+            gunManager.update(scannedEnemy);
         }
     }
 

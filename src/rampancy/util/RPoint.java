@@ -35,6 +35,6 @@ public class RPoint extends Point2D.Double implements RDrawable {
     }
 
     public void draw(Graphics2D g) {
-        g.fill(new Ellipse2D.Double(x - 1, y - 1, 3.0, 3.0));
+        g.fill(new Ellipse2D.Double(x, y, 1.0, 1.0));
     }
 }

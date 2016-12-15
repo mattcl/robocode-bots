@@ -1,8 +1,11 @@
 package rampancy.gun;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import rampancy.util.RPoint;
+import rampancy.util.RCircle;
+import rampancy.util.RDrawable;
 import rampancy.util.REnemy;
 import rampancy.util.RState;
 import rampancy.util.RUtil;
@@ -16,8 +19,12 @@ public class RCTGun extends RGun {
 
     }
 
-    public void update(REnemy enemy) {
+    public String name() {
+        return "Circular Targeting Gun";
+    }
 
+    public void update(REnemy enemy) {
+        this.lastScanned = enemy;
     }
 
     public RFiringSolution firingSolution() {
@@ -44,9 +51,39 @@ public class RCTGun extends RGun {
         for (; time < MAX_ITERATIONS; time++) {
             curHeading += deltaH;
             RPoint dest = targetLocation.projectTo(curHeading, velocity);
-            double power RUtil.getRequiredPower(dest);
+            double power = RUtil.getRequiredPower(this.referenceBot.location(), dest, time);
+            if (power > maxShotPower) {
+                break;
+            }
+
+            if (power > bestShotPower) {
+                bestShotPower = power;
+            }
+
+            targetLocation = dest;
+            examinedLocations.add(dest);
         }
 
-        return null;
+        double firingAngle = targetLocation.absoluteBearingFrom(this.referenceBot.location()) -
+            this.referenceBot.getGunHeadingRadians();
+
+        return new RFiringSolution(bestShotPower, firingAngle, new Drawable(examinedLocations));
+    }
+
+    class Drawable implements RDrawable {
+        private ArrayList<RPoint> locations;
+
+        public Drawable(ArrayList<RPoint> locations) {
+            this.locations = locations;
+        }
+
+        public void draw(Graphics2D g) {
+            for (RPoint p : locations) {
+                p.draw(g);
+            }
+
+            RPoint last = locations.get(locations.size() - 1);
+            new RCircle(last, 2).draw(g);
+        }
     }
 }
