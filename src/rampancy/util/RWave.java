@@ -13,16 +13,14 @@ public class RWave implements RDrawable {
     protected double power;
     protected double velocity;
     protected double distanceTraveled;
-    protected boolean hasBroken;
 
-    public RWave(RPoint origin, long timeFired, double power, Color color) {
+    public RWave(RPoint origin, long timeFired, double power) {
         this.origin = origin.clone();
         this.timeFired = timeFired;
         this.power = power;
         this.velocity = RUtil.getBulletVelocity(power);
         this.distanceTraveled = velocity;
-        this.color = color;
-        this.hasBroken = false;
+        this.color = Const.WAVE_COLOR;
     }
 
     public void update(long time) {
@@ -37,12 +35,8 @@ public class RWave implements RDrawable {
         return distanceFrom(point) / velocity;
     }
 
-    public void markBroken() {
-        this.hasBroken = true;
-    }
-
-    public boolean hasBroken() {
-        return hasBroken;
+    public boolean hasBroken(RPoint target) {
+        return target.distance(origin) + Const.WAVE_BREAK_TOLERANCE < distanceTraveled;
     }
 
     public void draw(Graphics2D g) {

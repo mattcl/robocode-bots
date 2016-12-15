@@ -2,11 +2,21 @@ package rampancy.util;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.List;
+
+import rampancy.Const;
+import rampancy.RampantRobot;
 
 public class RWaveManager implements RDrawable {
+    protected RampantRobot referenceBot;
     protected ArrayList<RWave> waves;
 
-    public RWaveManager() {
+    public RWaveManager(RampantRobot referenceBot) {
+        updateReferenceBot(referenceBot);
+    }
+
+    public void updateReferenceBot(RampantRobot referenceBot) {
+        this.referenceBot = referenceBot;
         this.waves = new ArrayList<RWave>();
     }
 
@@ -14,8 +24,29 @@ public class RWaveManager implements RDrawable {
         this.waves.add(wave);
     }
 
-    public void update(long time) {
+    public void maybeAddForEnemy(REnemy enemy) {
+        RState state = enemy.currentState();
+        if (state != null && state.adjustedDeltaE < 0) {
+            if (Math.abs(state.deltaV) < 2) { // TODO better wall hit detection
+                double power = Math.abs(state.adjustedDeltaE);
+                if (power >= Const.MIN_BULLET_POWER && power <= Const.MAX_BULLET_POWER) {
+                    // we have to adjust by 2 ticks, since the bullet fires with 1
+                    // tick of movement then we detect it 1 tick after it's been fired.
+                    this.add(new RWave(state.location.clone(), state.time - 2, power));
+                }
+            }
+        }
+    }
 
+    public void update(long time) {
+        List<RWave> broken = new ArrayList<RWave>();
+        for (RWave wave : waves) {
+            wave.update(time);
+            if (wave.hasBroken(this.referenceBot.location())) {
+                broken.add(wave);
+            }
+        }
+        waves.removeAll(broken);
     }
 
     public void draw(Graphics2D g) {

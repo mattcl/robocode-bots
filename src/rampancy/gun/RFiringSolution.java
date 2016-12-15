@@ -11,16 +11,21 @@ public class RFiringSolution implements RDrawable {
     public RPoint targetLocation;
     public long flightTime;
     public RDrawable drawable;
+    public double hitProbability;
 
     public RFiringSolution(double power, double firingAngle) {
-        this.power = power;
-        this.firingAngle = firingAngle;
+        this(power, firingAngle, null);
     }
 
     public RFiringSolution(double power, double firingAngle, RDrawable drawable) {
         this.power = power;
         this.firingAngle = firingAngle;
         this.drawable = drawable;
+    }
+
+    public RFiringSolution withProbability(double probability) {
+        this.hitProbability = probability;
+        return this;
     }
 
     public void draw(Graphics2D g) {

@@ -7,10 +7,11 @@ import robocode.Rules;
 public final class Const {
     // colors
     public static final Color DEFAULT_COLOR = Color.WHITE;
-    public static final Color WAVE_COLOR = new Color(0x757575);
+    public static final Color WAVE_COLOR = new Color(0x4B4B4B);
 
     public static final double BOT_RADIUS = 18.0;
     public static final double BOT_WIDTH = BOT_RADIUS * 2;
+    public static final double WALL_STICK = 150.0;
     public static final double MAX_VELOCITY = Rules.MAX_VELOCITY;
 
     public static final int MAX_HISTORY_DEPTH = 1000;
@@ -21,4 +22,6 @@ public final class Const {
     public static final double MAX_BULLET_POWER = Rules.MAX_BULLET_POWER;
     public static final double MIN_BULLET_POWER = Rules.MIN_BULLET_POWER;
     public static final double MAX_BULLET_VELOCITY_BOUND = 20.0;
+
+    public static final double WAVE_BREAK_TOLERANCE = 30.0;
 }

@@ -1,5 +1,6 @@
 package rampancy.util;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
 
@@ -12,15 +13,18 @@ public class REnemy implements RStateful, RDrawable {
     public String name;
     protected RampantRobot referenceBot;
     protected LinkedList<RState> states;
+    protected LinkedList<Double> preScanEnergyAdjustments;
 
     public REnemy(String name, RampantRobot referenceBot) {
         this.name = name;
         this.referenceBot = referenceBot;
         this.states = new LinkedList<RState>();
+        this.preScanEnergyAdjustments = new LinkedList<Double>();
     }
 
     public void updateReferenceBot(RampantRobot referenceBot) {
         this.referenceBot = referenceBot;
+        this.preScanEnergyAdjustments = new LinkedList<Double>();
     }
 
     public RPoint location() {
@@ -56,8 +60,18 @@ public class REnemy implements RStateful, RDrawable {
         return states.get(2);
     }
 
+    public void notePreSecanAdjustement(double val) {
+        this.preScanEnergyAdjustments.add(val);
+    }
+
     public RState updateState(ScannedRobotEvent e) {
         RState state = new RState(referenceBot, currentState(), e);
+
+        // adjust for bullet hits and energy gain
+        while (!preScanEnergyAdjustments.isEmpty()) {
+            double adjustment = preScanEnergyAdjustments.pop();
+            state.adjustedDeltaE += adjustment;
+        }
         states.push(state);
         if(states.size() > Const.MAX_HISTORY_DEPTH) {
             states.removeLast();
@@ -66,6 +80,9 @@ public class REnemy implements RStateful, RDrawable {
     }
 
     public void draw(Graphics2D g) {
+        Color old = g.getColor();
+        g.setColor(Const.DEFAULT_COLOR);
         this.botRect().draw(g);
+        g.setColor(old);
     }
 }

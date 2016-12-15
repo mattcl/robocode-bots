@@ -17,6 +17,8 @@ public class RState {
     public double deltaH;
     public double deltaV;
     public double energy;
+    public double deltaE;
+    public double adjustedDeltaE;
     public int directionTraveling;
     public long time;
 
@@ -48,6 +50,8 @@ public class RState {
         this.location          = reference.location().projectTo(absoluteBearing, distance);
         this.deltaH            = lastState == null ? 0 : heading - lastState.heading;
         this.deltaV            = lastState == null ? 0 : velocity - lastState.velocity;
+        this.deltaE            = lastState == null ? 0 : energy - lastState.energy;
+        this.adjustedDeltaE    = this.deltaE;
     }
 
     public RState(RState state) {
@@ -62,6 +66,8 @@ public class RState {
             state.deltaH,
             state.deltaV,
             state.energy,
+            state.deltaE,
+            state.adjustedDeltaE,
             state.directionTraveling,
             state.time
         );
@@ -78,6 +84,8 @@ public class RState {
         double deltaH,
         double deltaV,
         double energy,
+        double deltaE,
+        double adjustedDeltaE,
         int directionTraveling,
         long time
     ) {
@@ -91,6 +99,8 @@ public class RState {
         this.deltaH             = deltaH;
         this.deltaV             = deltaV;
         this.energy             = energy;
+        this.deltaE             = deltaE;
+        this.adjustedDeltaE     = deltaE;
         this.directionTraveling = directionTraveling;
         this.time               = time;
     }

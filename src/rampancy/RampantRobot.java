@@ -4,7 +4,9 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 
 import rampancy.gun.RGunManager;
+import rampancy.move.RMovementManager;
 import rampancy.radar.RRadarManager;
+import rampancy.util.RBattlefield;
 import rampancy.util.REnemy;
 import rampancy.util.REnemyManager;
 import rampancy.util.RPoint;
@@ -12,12 +14,15 @@ import rampancy.util.RState;
 import rampancy.util.RStateful;
 
 import robocode.AdvancedRobot;
+import robocode.BulletHitEvent;
 import robocode.ScannedRobotEvent;
 
 abstract public class RampantRobot extends AdvancedRobot implements RStateful {
+    protected static RBattlefield battlefield;
     protected static REnemyManager enemyManager;
     protected static RRadarManager radarManager;
     protected static RGunManager gunManager;
+    protected static RMovementManager movementManager;
 
     protected LinkedList<RState> states;
 
@@ -34,16 +39,22 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         enemyManager.updateReferenceBot(this);
         radarManager.updateReferenceBot(this);
         gunManager.updateReferenceBot(this);
+        movementManager.updateReferenceBot(this);
     }
+
+    abstract public void setColors();
 
     public void firstTimeSetup() {
         enemyManager = new REnemyManager(this);
         radarManager = new RRadarManager(this);
         gunManager = new RGunManager(this);
+        movementManager = new RMovementManager(this);
     }
 
     public void run() {
         super.run();
+        setColors();
+        RBattlefield.setGlobalBattlefield(new RBattlefield(this.getBattleFieldWidth(), this.getBattleFieldHeight()));
         this.setAdjustGunForRobotTurn(true);
         this.setAdjustRadarForGunTurn(true);
         this.setAdjustRadarForRobotTurn(true);
@@ -59,7 +70,9 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     }
 
     public void doMovement() {
-
+        if (movementManager != null) {
+            movementManager.execute();
+        }
     }
 
     public void doGun() {
@@ -84,15 +97,34 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         if (gunManager != null) {
             gunManager.update(scannedEnemy);
         }
+
+        if (movementManager != null) {
+            movementManager.update(scannedEnemy);
+        }
+    }
+
+    public void onBulletHit(BulletHitEvent e) {
+        if (enemyManager != null) {
+            enemyManager.onBulletHit(e);
+        }
     }
 
     public void onPaint(Graphics2D g) {
+        RBattlefield bf = RBattlefield.globalBattlefield();
+        if (bf != null) {
+            bf.draw(g);
+        }
+
         if (enemyManager != null) {
             enemyManager.draw(g);
         }
 
         if (gunManager != null) {
             gunManager.draw(g);
+        }
+
+        if (movementManager != null) {
+            movementManager.draw(g);
         }
     }
 

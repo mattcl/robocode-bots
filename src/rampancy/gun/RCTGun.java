@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import rampancy.util.RPoint;
+import rampancy.util.RBattlefield;
 import rampancy.util.RCircle;
 import rampancy.util.RDrawable;
 import rampancy.util.REnemy;
@@ -57,12 +58,20 @@ public class RCTGun extends RGun {
                 break;
             }
 
+            if (!RBattlefield.globalBattlefield().validBotLocation(dest)) {
+                break;
+            }
+
             if (power > bestShotPower) {
                 bestShotPower = power;
             }
 
             targetLocation = dest;
             examinedLocations.add(dest);
+        }
+
+        if (examinedLocations.isEmpty()) {
+            return null;
         }
 
         double firingAngle = targetLocation.absoluteBearingFrom(this.referenceBot.location()) -

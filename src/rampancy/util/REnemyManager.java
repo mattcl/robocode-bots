@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import rampancy.RampantRobot;
 
+import robocode.BulletHitEvent;
+
 public class REnemyManager implements RDrawable {
     protected HashMap<String, REnemy> enemies;
     protected RampantRobot referenceBot;
@@ -26,6 +28,12 @@ public class REnemyManager implements RDrawable {
             enemies.put(name, new REnemy(name, referenceBot));
         }
         return enemies.get(name);
+    }
+
+    public void onBulletHit(BulletHitEvent e) {
+        REnemy enemy = get(e.getName());
+        double damage = RUtil.getBulletDamage(e.getBullet().getPower());
+        enemy.notePreSecanAdjustement(damage);
     }
 
     public void draw(Graphics2D g) {

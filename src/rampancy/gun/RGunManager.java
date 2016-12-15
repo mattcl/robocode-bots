@@ -64,16 +64,23 @@ public class RGunManager implements RDrawable {
     }
 
     protected void maybeLockFiringSolution() {
+        double maxProbability = -1;
+        RFiringSolution maxSolution = null;
+
         List<RFiringSolution> firingSolutions = new ArrayList<RFiringSolution>();
         for (RGun gun : guns.values()) {
             RFiringSolution solution = gun.firingSolution();
             if (solution != null) {
                 firingSolutions.add(solution);
+                if (solution.hitProbability > maxProbability) {
+                    maxProbability = solution.hitProbability;
+                    maxSolution = solution;
+                }
             }
         }
 
-        if (!firingSolutions.isEmpty()) {
-            this.lockedSolution = firingSolutions.get(0);
+        if (maxSolution != null) {
+            this.lockedSolution = maxSolution;
             this.fireTime = this.referenceBot.getTime() + 1;
             this.referenceBot.setTurnGunRightRadians(Utils.normalRelativeAngle(this.lockedSolution.firingAngle));
         }
