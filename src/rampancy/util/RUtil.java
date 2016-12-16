@@ -53,6 +53,15 @@ public class RUtil {
 		return Math.max(min, Math.min(value, max));
 	}
 
+    public static double rollingAverage(double existing, double newValue, int n) {
+        return (existing * n + newValue) / ((double)n + 1.0);
+    }
+
+    public static double guessFactor(int bin, int num_bins) {
+        int offset = bin - (num_bins - 1) / 2;
+        return (double) offset / (double) ((num_bins - 1) / 2);
+    }
+
 	public static double wallSmoothing(RPoint location, double goAngle, int direction, double distanceToCenterOfOrbit) {
 		RBattlefield bf = RBattlefield.globalBattlefield();
 		double wallStick = Math.min(distanceToCenterOfOrbit, Const.WALL_STICK);
