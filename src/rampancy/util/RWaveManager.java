@@ -32,7 +32,12 @@ public class RWaveManager implements RDrawable {
                 if (power >= Const.MIN_BULLET_POWER && power <= Const.MAX_BULLET_POWER) {
                     // we have to adjust by 2 ticks, since the bullet fires with 1
                     // tick of movement then we detect it 1 tick after it's been fired.
-                    this.add(new RWave(state.location.clone(), state.time - 2, power));
+                    this.add(new RWave(
+                        state.location.clone(),
+                        state.time - 2,
+                        power,
+                        state,
+                        this.referenceBot.lastUsableState()));
                 }
             }
         }

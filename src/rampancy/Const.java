@@ -24,4 +24,6 @@ public final class Const {
     public static final double MAX_BULLET_VELOCITY_BOUND = 20.0;
 
     public static final double WAVE_BREAK_TOLERANCE = 30.0;
+
+    public static final int GUESS_FACTOR_BUCKETS = 31;
 }

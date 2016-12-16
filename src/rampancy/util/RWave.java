@@ -13,14 +13,18 @@ public class RWave implements RDrawable {
     protected double power;
     protected double velocity;
     protected double distanceTraveled;
+    protected RState shooterState;
+    protected RState targetState;
 
-    public RWave(RPoint origin, long timeFired, double power) {
+    public RWave(RPoint origin, long timeFired, double power, RState shooterState, RState targetState) {
         this.origin = origin.clone();
         this.timeFired = timeFired;
         this.power = power;
         this.velocity = RUtil.getBulletVelocity(power);
         this.distanceTraveled = velocity;
         this.color = Const.WAVE_COLOR;
+        this.shooterState = shooterState;
+        this.targetState = targetState;
     }
 
     public void update(long time) {
