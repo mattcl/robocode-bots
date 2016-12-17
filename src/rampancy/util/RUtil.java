@@ -53,6 +53,20 @@ public class RUtil {
 		return Math.max(min, Math.min(value, max));
 	}
 
+    public static double normalize(double value, double valueMin, double valueMax) {
+        double range = valueMax - valueMin;
+        double limited = limit(value, valueMin, valueMax);
+        return (limited - valueMin) / range;
+    }
+
+    public static int normalizedToIndex(double normalizedValue, int numIndices) {
+        int index = (int) (normalizedValue * numIndices);
+        if (index == numIndices) {
+            index--;
+        }
+        return index;
+    }
+
     public static double rollingAverage(double existing, double newValue, int n) {
         return (existing * n + newValue) / ((double)n + 1.0);
     }

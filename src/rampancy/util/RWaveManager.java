@@ -30,6 +30,11 @@ public class RWaveManager implements RDrawable {
             if (Math.abs(state.deltaV) < 2) { // TODO better wall hit detection
                 double power = Math.abs(state.adjustedDeltaE);
                 if (power >= Const.MIN_BULLET_POWER && power <= Const.MAX_BULLET_POWER) {
+                    RState useableState = this.referenceBot.lastUsableState();
+                    if (useableState != null) {
+                        useableState = useableState.fromPerspective(state);
+                    }
+
                     // we have to adjust by 2 ticks, since the bullet fires with 1
                     // tick of movement then we detect it 1 tick after it's been fired.
                     this.add(new RWave(
@@ -37,7 +42,7 @@ public class RWaveManager implements RDrawable {
                         state.time - 2,
                         power,
                         state,
-                        this.referenceBot.lastUsableState()));
+                        useableState));
                 }
             }
         }

@@ -15,6 +15,7 @@ import rampancy.util.RStateful;
 
 import robocode.AdvancedRobot;
 import robocode.BulletHitEvent;
+import robocode.HitByBulletEvent;
 import robocode.ScannedRobotEvent;
 
 abstract public class RampantRobot extends AdvancedRobot implements RStateful {
@@ -62,6 +63,7 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
         while(true) {
+            updateState(null);
             doMovement();
             doGun();
             doRadar();
@@ -109,6 +111,10 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         }
     }
 
+    public void onHitByBullet(HitByBulletEvent e) {
+
+    }
+
     public void onPaint(Graphics2D g) {
         RBattlefield bf = RBattlefield.globalBattlefield();
         if (bf != null) {
@@ -154,7 +160,7 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     }
 
     public RState updateState(ScannedRobotEvent e) {
-        RState state = new RState(this, e);
+        RState state = new RState(this);
         states.push(state);
         if(states.size() > Const.MAX_HISTORY_DEPTH) {
             states.removeLast();

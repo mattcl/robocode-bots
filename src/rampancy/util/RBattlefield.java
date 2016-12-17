@@ -74,6 +74,32 @@ public class RBattlefield implements RDrawable {
         return Math.max(1, distanceFromLeft(point) - Const.BOT_RADIUS);
     }
 
+    public double nearestWallDistance(RPoint point) {
+        if(!battlefield.contains(point)) {
+            return -1;
+        }
+
+        double distLeft = point.x;
+        double distRight = battlefield.width - point.x;
+        double distTop = battlefield.height - point.y;
+        double distBot = point.y;
+
+        return Math.min(Math.min(distRight, distLeft), Math.min(distTop, distBot));
+    }
+
+    public int locationCategory(RPoint point) {
+        double dist = nearestWallDistance(point);
+        if (dist < Const.AGAINST_WALL_TOLERANCE) {
+            return Const.AGAINST_WALL;
+        }
+
+        if (dist < Const.NEAR_WALL_TOLERANCE) {
+            return Const.NEAR_WALL;
+        }
+
+        return Const.AWAY_FROM_WALL;
+    }
+
     public void draw(Graphics2D g) {
         Color old = g.getColor();
         g.setColor(Color.GRAY);

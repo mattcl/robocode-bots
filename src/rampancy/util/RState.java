@@ -24,13 +24,13 @@ public class RState {
 
     public RState() { }
 
-    public RState(RampantRobot robot, ScannedRobotEvent e) {
+    public RState(RampantRobot robot) {
         RState lastState = robot.currentState();
         this.location    = new RPoint(robot.getX(), robot.getY());
         this.heading     = robot.getHeadingRadians();
         this.velocity    = robot.getVelocity();
         this.energy      = robot.getEnergy();
-        this.time        = e.getTime();
+        this.time        = robot.getTime();
 
         this.deltaH      = lastState == null ? 0 : heading - lastState.heading;
         this.deltaV      = lastState == null ? 0 : velocity - lastState.velocity;
@@ -107,5 +107,21 @@ public class RState {
 
     public RState clone() {
         return new RState(this);
+    }
+
+    /**
+     * Return a state that is the current state as seen by the reference state.
+     * This calculates what the current state would be if viewed from the reference state.
+     */
+    public RState fromPerspective(RState referenceState) {
+        RState state = this.clone();
+
+        state.absoluteBearing = referenceState.location.absoluteBearingTo(state.location);
+        state.distance = referenceState.location.distance(state.location);
+        state.lateralVelocity = state.velocity * Math.sin(state.heading - state.absoluteBearing);
+        state.advancingVelocity = state.velocity * -1 * Math.cos(state.heading - state.absoluteBearing);
+        state.directionTraveling = state.lateralVelocity >= 0 ? 1 : -1;
+
+        return state;
     }
 }

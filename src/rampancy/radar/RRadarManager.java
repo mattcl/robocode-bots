@@ -30,6 +30,7 @@ public class RRadarManager {
     }
 
     public void execute() {
+        referenceBot.setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
         if (scans.size() == 1) {
             for (RState state : scans.values()) {
                 double bearing = referenceBot.location().absoluteBearingTo(state.location);
