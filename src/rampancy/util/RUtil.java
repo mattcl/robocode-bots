@@ -49,6 +49,10 @@ public class RUtil {
 		return 1;
 	}
 
+    public static boolean almostEqual(double value1, double value2, double tolerance) {
+        return Math.abs(value1 - value2) <= tolerance;
+    }
+
 	public static double limit(double value, double min, double max) {
 		return Math.max(min, Math.min(value, max));
 	}

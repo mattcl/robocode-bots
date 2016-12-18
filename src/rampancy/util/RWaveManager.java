@@ -62,9 +62,22 @@ public class RWaveManager implements RDrawable {
     }
 
     public RWave getWaveForBullet(Bullet bullet) {
+        ArrayList<RWave> candidates = new ArrayList<RWave>();
         RPoint location = new RPoint(bullet.getX(), bullet.getY());
         double power = bullet.getPower();
-        return null;
+        for (RWave wave : waves) {
+            if (RUtil.almostEqual(wave.distanceTraveled, location.distance(wave.origin), 40) &&
+                    RUtil.almostEqual(wave.power, power, 0.3)) {
+                candidates.add(wave);
+            }
+        }
+
+        if (candidates.isEmpty()) {
+            return null;
+        }
+
+        // TODO: better candidate selection
+        return candidates.get(0);
     }
 
     public void draw(Graphics2D g) {
