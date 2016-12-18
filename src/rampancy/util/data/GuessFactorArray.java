@@ -79,4 +79,21 @@ public class GuessFactorArray {
     public double computeGuessFactor(int bin) {
         return RUtil.guessFactor(bin, probabilities.length);
     }
+
+    public GuessFactorArray sum(GuessFactorArray other) {
+        GuessFactorArray result = this.copy();
+        for (int i = 0; i < result.probabilities.length; i++) {
+            result.probabilities[i] += other.probabilities[i];
+        }
+        return result;
+    }
+
+    public GuessFactorArray avearge(GuessFactorArray other, double otherWeight) {
+        GuessFactorArray result = this.copy();
+        for (int i = 0; i < result.probabilities.length; i++) {
+            result.probabilities[i] =
+                (result.probabilities[i] + (other.probabilities[i] * otherWeight)) / (1.0 + otherWeight);
+        }
+        return result;
+    }
 }

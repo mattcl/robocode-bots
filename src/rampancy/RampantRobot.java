@@ -112,7 +112,9 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
     }
 
     public void onHitByBullet(HitByBulletEvent e) {
-
+        if (movementManager != null) {
+            movementManager.onHitByBullet(e);
+        }
     }
 
     public void onPaint(Graphics2D g) {

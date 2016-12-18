@@ -7,6 +7,8 @@ import java.util.List;
 import rampancy.Const;
 import rampancy.RampantRobot;
 
+import robocode.Bullet;
+
 public class RWaveManager implements RDrawable {
     protected RampantRobot referenceBot;
     protected ArrayList<RWave> waves;
@@ -57,6 +59,12 @@ public class RWaveManager implements RDrawable {
             }
         }
         waves.removeAll(broken);
+    }
+
+    public RWave getWaveForBullet(Bullet bullet) {
+        RPoint location = new RPoint(bullet.getX(), bullet.getY());
+        double power = bullet.getPower();
+        return null;
     }
 
     public void draw(Graphics2D g) {

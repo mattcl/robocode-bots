@@ -7,27 +7,33 @@ import rampancy.util.RDrawable;
 import rampancy.util.REnemy;
 import rampancy.util.RWaveManager;
 
+import robocode.HitByBulletEvent;
 import robocode.util.Utils;
 
 public class RMovementManager implements RDrawable {
     protected RampantRobot referenceBot;
-    protected RWaveManager waveManager;
+    protected RSurfer surfer;
 
     public RMovementManager(RampantRobot referenceBot) {
+        this.surfer = new RSurfer(referenceBot);
         updateReferenceBot(referenceBot);
     }
 
     public void updateReferenceBot(RampantRobot referenceBot) {
         this.referenceBot = referenceBot;
-        this.waveManager = new RWaveManager(referenceBot);
+        this.surfer.updateReferenceBot(referenceBot);
     }
 
     public void update(REnemy enemy) {
-        this.waveManager.maybeAddForEnemy(enemy);
+        this.surfer.update(enemy);
+    }
+
+    public void onHitByBullet(HitByBulletEvent e) {
+        this.surfer.onHitByBullet(e);
     }
 
     public void execute() {
-        this.waveManager.update(this.referenceBot.getTime());
+        this.surfer.execute();
     }
 
     public void move(double goAngle, double dist) {
@@ -50,6 +56,6 @@ public class RMovementManager implements RDrawable {
     }
 
     public void draw(Graphics2D g) {
-        this.waveManager.draw(g);
+        this.surfer.draw(g);
     }
 }

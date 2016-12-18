@@ -76,6 +76,10 @@ public class RUtil {
         return (double) offset / (double) ((num_bins - 1) / 2);
     }
 
+    public static double roughMaxEscapeAngle(double velocity) {
+        return Math.asin(8.0 / velocity);
+    }
+
 	public static double wallSmoothing(RPoint location, double goAngle, int direction, double distanceToCenterOfOrbit) {
 		RBattlefield bf = RBattlefield.globalBattlefield();
 		double wallStick = Math.min(distanceToCenterOfOrbit, Const.WALL_STICK);

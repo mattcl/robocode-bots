@@ -9,30 +9,30 @@ public final class Const {
     public static final Color DEFAULT_COLOR = Color.WHITE;
     public static final Color WAVE_COLOR = new Color(0x4B4B4B);
 
+    // Rules/Physics
     public static final double BOT_RADIUS = 18.0;
     public static final double BOT_WIDTH = BOT_RADIUS * 2;
-    public static final double WALL_STICK = 150.0;
     public static final double MAX_VELOCITY = Rules.MAX_VELOCITY;
+    public static final double MAX_DELTA_H = Rules.MAX_TURN_RATE_RADIANS;
     public static final double MAX_SCAN_RANGE = 1200;
+    public static final double MAX_BULLET_POWER = Rules.MAX_BULLET_POWER;
+    public static final double MIN_BULLET_POWER = Rules.MIN_BULLET_POWER;
+    public static final double MAX_BULLET_VELOCITY_BOUND = 20.0;
 
     public static final int MAX_HISTORY_DEPTH = 1000;
 
+    public static final double WALL_STICK = 150.0;
     public static final double AGAINST_WALL_TOLERANCE = 150;
     public static final double NEAR_WALL_TOLERANCE = AGAINST_WALL_TOLERANCE + 150;
     public static final int AGAINST_WALL = 0;
     public static final int NEAR_WALL = 1;
     public static final int AWAY_FROM_WALL = 2;
 
-    public static final double MAX_BULLET_POWER = Rules.MAX_BULLET_POWER;
-    public static final double MIN_BULLET_POWER = Rules.MIN_BULLET_POWER;
-    public static final double MAX_BULLET_VELOCITY_BOUND = 20.0;
-
     public static final double WAVE_BREAK_TOLERANCE = 30.0;
 
     public static final int MAX_AVERAGE_EXISTING_WEIGHT = 200;
 
     public static final int GUESS_FACTOR_BUCKETS = 31;
-
 
     public static final double[] NORMAL_DISTRIBUTION = {
         1.9947114020071635,
