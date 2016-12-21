@@ -66,8 +66,8 @@ public class RWaveManager implements RDrawable {
         RPoint location = new RPoint(bullet.getX(), bullet.getY());
         double power = bullet.getPower();
         for (RWave wave : waves) {
-            if (RUtil.almostEqual(wave.distanceTraveled, location.distance(wave.origin), 40) &&
-                    RUtil.almostEqual(wave.power, power, 0.3)) {
+            if (RUtil.almostEqual(wave.distanceTraveled, location.distance(wave.origin), Const.WAVE_BREAK_TOLERANCE + 2) &&
+                    RUtil.almostEqual(wave.power, power, 0.5)) {
                 candidates.add(wave);
             }
         }
@@ -78,6 +78,19 @@ public class RWaveManager implements RDrawable {
 
         // TODO: better candidate selection
         return candidates.get(0);
+    }
+
+    public RWave getClosestWave(RPoint location) {
+        double closest = Double.POSITIVE_INFINITY;
+        RWave closestWave = null;
+        for (RWave wave : waves) {
+            double time = wave.timeToImpact(location);
+            if (time < closest) {
+                closest = time;
+                closestWave = wave;
+            }
+        }
+        return closestWave;
     }
 
     public void draw(Graphics2D g) {

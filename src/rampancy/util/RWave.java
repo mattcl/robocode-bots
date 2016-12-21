@@ -7,14 +7,14 @@ import rampancy.Const;
 
 public class RWave implements RDrawable {
 
-    protected RPoint origin;
-    protected Color color;
-    protected long timeFired;
-    protected double power;
-    protected double velocity;
-    protected double distanceTraveled;
-    protected RState shooterState;
-    protected RState targetState;
+    public RPoint origin;
+    public Color color;
+    public long timeFired;
+    public double power;
+    public double velocity;
+    public double distanceTraveled;
+    public RState shooterState;
+    public RState targetState;
 
     public RWave(RPoint origin, long timeFired, double power, RState shooterState, RState targetState) {
         this.origin = origin.clone();

@@ -15,8 +15,8 @@ public class SegmentTree {
         return this.rootNode.getSegment(state);
     }
 
-    class Node {
-        protected GuessFactorArray stats;
+    public class Node {
+        public GuessFactorArray stats;
         protected Node[] children;
         protected int visits;
         protected int splitThreshold;

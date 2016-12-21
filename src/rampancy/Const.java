@@ -28,7 +28,7 @@ public final class Const {
     public static final int NEAR_WALL = 1;
     public static final int AWAY_FROM_WALL = 2;
 
-    public static final double WAVE_BREAK_TOLERANCE = 30.0;
+    public static final double WAVE_BREAK_TOLERANCE = 50.0;
 
     public static final int MAX_AVERAGE_EXISTING_WEIGHT = 200;
 
