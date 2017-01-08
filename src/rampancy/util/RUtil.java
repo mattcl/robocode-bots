@@ -1,9 +1,10 @@
 package rampancy.util;
 
 import robocode.Rules;
+import robocode.util.Utils;
 
 import rampancy.Const;
-import rampancy.RampantRobot;
+import rampancy.extern.MoveSim;
 
 public class RUtil {
     public static double getBulletPower(double velocity) {
@@ -130,7 +131,8 @@ public class RUtil {
         return newAngle;
     }
 
-    public static void simulateOrbit(RPoint botLocation, RPoint center, int direction) {
+    public static void adjustSimForOrbit(MoveSim sim, RPoint center, int direction) {
+        RPoint botLocation = new RPoint(sim.position);
         double distance = botLocation.distance(center);
         // just make sure we don't have a dumb value here
         direction = nonZeroSign(direction);
@@ -138,5 +140,23 @@ public class RUtil {
         double orbitAngle = center.absoluteBearingTo(botLocation) + (Math.PI / 2.0 * direction);
         orbitAngle = wallSmoothing(botLocation, orbitAngle, direction, distance);
 
+        sim.angleToTurn = Utils.normalRelativeAngle(orbitAngle - sim.heading);
+        sim.direction = 1;
+
+        if (Math.abs(sim.angleToTurn) > Math.PI / 2) {
+            sim.angleToTurn = Utils.normalRelativeAngle(sim.angleToTurn - Math.PI);
+            sim.direction = -1;
+        }
+    }
+
+    public static void simulateOrbit(RState robotState, RPoint center, int direction) {
+        RPoint botLocation = robotState.location;
+        MoveSim sim = new MoveSim();
+        sim.setLocation(botLocation.x, botLocation.y);
+        sim.heading = robotState.heading;
+        sim.velocity = robotState.velocity;
+
+        adjustSimForOrbit(sim, center, direction);
+        sim.step();
     }
 }

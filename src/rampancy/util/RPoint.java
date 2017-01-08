@@ -13,6 +13,10 @@ public class RPoint extends Point2D.Double implements RDrawable {
         super(x, y);
     }
 
+    public RPoint(Point2D.Double point) {
+        super(point.x, point.y);
+    }
+
     public RPoint clone() {
         return (RPoint) super.clone();
     }
