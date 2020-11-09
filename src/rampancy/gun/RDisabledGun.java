@@ -15,6 +15,10 @@ public class RDisabledGun extends RGun {
     }
 
     public RFiringSolution firingSolution() {
+    	if (this.lastScanned == null) {
+    		return null;
+    	}
+    	
         RState state = lastScanned.currentState();
         if (state == null || state.energy > 0) {
             return null;

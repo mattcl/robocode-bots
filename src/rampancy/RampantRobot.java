@@ -43,18 +43,18 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         movementManager.updateReferenceBot(this);
     }
 
-    abstract public void setColors();
+    abstract public void setUpColors();
 
     public void firstTimeSetup() {
         enemyManager = new REnemyManager(this);
         radarManager = new RRadarManager(this);
         gunManager = new RGunManager(this);
-        movementManager = new RMovementManager(this);
+        movementManager = new RMovementManager();
     }
 
     public void run() {
         super.run();
-        setColors();
+        setUpColors();
         RBattlefield.setGlobalBattlefield(new RBattlefield(this.getBattleFieldWidth(), this.getBattleFieldHeight()));
         this.setAdjustGunForRobotTurn(true);
         this.setAdjustRadarForGunTurn(true);

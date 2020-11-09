@@ -71,6 +71,11 @@ public class GuessFactorArray {
         }
         return computeGuessFactor(max);
     }
+    
+    public double probabilityAt(double guessFactor) {
+        int bin = this.computeBin(guessFactor);
+        return this.probabilities[bin];
+    }
 
     public int computeBin(double guessFactor) {
         return (int)RUtil.limit((guessFactor + 1) * ((probabilities.length - 1) / 2), 0, probabilities.length - 1);
@@ -88,7 +93,7 @@ public class GuessFactorArray {
         return result;
     }
 
-    public GuessFactorArray avearge(GuessFactorArray other, double otherWeight) {
+    public GuessFactorArray average(GuessFactorArray other, double otherWeight) {
         GuessFactorArray result = this.copy();
         for (int i = 0; i < result.probabilities.length; i++) {
             result.probabilities[i] =

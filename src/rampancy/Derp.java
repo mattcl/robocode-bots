@@ -7,7 +7,6 @@ import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
 /**
- * @author Matthew Chun-Lum
  *
  */
 public class Derp extends AdvancedRobot {

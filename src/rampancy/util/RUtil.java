@@ -130,15 +130,19 @@ public class RUtil {
         }
         return newAngle;
     }
-
-    public static void adjustSimForOrbit(MoveSim sim, RPoint center, int direction) {
-        RPoint botLocation = new RPoint(sim.position);
+    
+    public static double getOrbitAngle(RPoint botLocation, RPoint center, int direction) {
         double distance = botLocation.distance(center);
         // just make sure we don't have a dumb value here
         direction = nonZeroSign(direction);
 
         double orbitAngle = center.absoluteBearingTo(botLocation) + (Math.PI / 2.0 * direction);
-        orbitAngle = wallSmoothing(botLocation, orbitAngle, direction, distance);
+        return wallSmoothing(botLocation, orbitAngle, direction, distance);
+    }
+
+    public static void adjustSimForOrbit(MoveSim sim, RPoint center, int direction) {
+        RPoint botLocation = new RPoint(sim.position);
+        double orbitAngle = RUtil.getOrbitAngle(botLocation, center, direction);
 
         sim.angleToTurn = Utils.normalRelativeAngle(orbitAngle - sim.heading);
         sim.direction = 1;
@@ -148,15 +152,19 @@ public class RUtil {
             sim.direction = -1;
         }
     }
-
-    public static void simulateOrbit(RState robotState, RPoint center, int direction) {
+    
+    public static MoveSim makeMoveSim(RState robotState) {
         RPoint botLocation = robotState.location;
         MoveSim sim = new MoveSim();
         sim.setLocation(botLocation.x, botLocation.y);
         sim.heading = robotState.heading;
         sim.velocity = robotState.velocity;
+        return sim;
+    }
 
+    public static RPoint simulateOrbit(MoveSim sim, RPoint center, int direction) {
         adjustSimForOrbit(sim, center, direction);
         sim.step();
+        return new RPoint(sim.position);
     }
 }
