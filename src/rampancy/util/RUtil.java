@@ -3,8 +3,12 @@ package rampancy.util;
 import robocode.Rules;
 import robocode.util.Utils;
 
+import java.util.ArrayList;
+
 import rampancy.Const;
 import rampancy.extern.MoveSim;
+import rampancy.move.RMoveChoice;
+import rampancy.util.data.GuessFactorArray;
 
 public class RUtil {
     public static double getBulletPower(double velocity) {
@@ -82,10 +86,6 @@ public class RUtil {
         return (double) offset / (double) ((num_bins - 1) / 2);
     }
 
-    public static double roughMaxEscapeAngle(double velocity) {
-        return Math.asin(8.0 / velocity);
-    }
-
     public static double wallSmoothing(RPoint location, double goAngle, int direction, double distanceToCenterOfOrbit) {
         RBattlefield bf = RBattlefield.globalBattlefield();
         double wallStick = Math.min(distanceToCenterOfOrbit, Const.WALL_STICK);
@@ -131,12 +131,32 @@ public class RUtil {
         return newAngle;
     }
     
+    public static double getDistanceModifier(RPoint botLocation, RPoint center) {
+    	double dist = botLocation.distance(center);
+    	if (dist < 200) {
+    		// danger zone
+    		return 0.875;
+    	} else if (dist < 400) {
+    		return 0.175 / 3.0;
+    	} else if (dist > 500) {
+    		return -0.175 / 3.0;
+    	}
+    	return 0.0;
+    }
+    
     public static double getOrbitAngle(RPoint botLocation, RPoint center, int direction) {
+    	double distanceModifier = RUtil.getDistanceModifier(botLocation, center);
+    	return RUtil.getOrbitAngle(botLocation, center, direction, distanceModifier);
+    }
+    
+    public static double getOrbitAngle(RPoint botLocation, RPoint center, int direction, double distanceModifier) {
         double distance = botLocation.distance(center);
         // just make sure we don't have a dumb value here
         direction = nonZeroSign(direction);
 
-        double orbitAngle = center.absoluteBearingTo(botLocation) + (Math.PI / 2.0 * direction);
+        double orbitAngle = center.absoluteBearingTo(botLocation) + ((Math.PI / 2.0 - distanceModifier) * direction);
+        
+        
         return wallSmoothing(botLocation, orbitAngle, direction, distance);
     }
 
@@ -166,5 +186,33 @@ public class RUtil {
         adjustSimForOrbit(sim, center, direction);
         sim.step();
         return new RPoint(sim.position);
+    }
+    
+    public static ArrayList<RMoveChoice> simulateDirection(long startTime, RState rootState, RWave wave, int direction) {
+    	wave = wave.copy();
+    	ArrayList<RMoveChoice> locations = new ArrayList<RMoveChoice>();
+    	
+        MoveSim sim = RUtil.makeMoveSim(rootState);
+        
+        for(int i = 0; i < 1000; i++) {
+        	RPoint loc = RUtil.simulateOrbit(sim, wave.origin, direction);
+        	RMoveChoice location = new RMoveChoice(loc, -1, direction, startTime + i);
+        	location.wave = wave;
+			locations.add(location);
+			
+			wave.tick();
+			if (wave.hasBroken(location.position)) {
+				break;
+			}
+        }
+    	return locations;
+    }
+    
+    public static double roughMaxEscapeAngle(double velocity) {
+        return Math.asin(8.0 / velocity);
+    }
+
+    public static double maxEscapeAngle(int direction) {
+    	return 0.0;
     }
 }

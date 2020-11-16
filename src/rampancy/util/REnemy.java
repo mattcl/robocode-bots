@@ -59,6 +59,10 @@ public class REnemy implements RStateful, RDrawable {
         }
         return states.get(2);
     }
+    
+    public LinkedList<RState> lastNStates(int n) {
+    	return new LinkedList<RState>(this.states.subList(0, Math.min(n - 1, this.states.size() - 1)));
+    }
 
     public void notePreSecanAdjustement(double val) {
         this.preScanEnergyAdjustments.add(val);

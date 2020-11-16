@@ -28,22 +28,26 @@ public class GuessFactorArray {
     }
 
     public void update(double guessFactor) {
+    	this.update(guessFactor, 1.0);
+    }
+    
+    public void update(double guessFactor, double scale) {
         this.visits++;
         int length = Const.NORMAL_DISTRIBUTION.length;
         int bin = computeBin(guessFactor);
         double[] newData = new double[probabilities.length];
         for (int i = 0; i < length; i++) {
             if (i == 0) {
-                newData[bin] += Const.NORMAL_DISTRIBUTION[0];
+                newData[bin] += Const.NORMAL_DISTRIBUTION[0] * scale;
             } else {
                 int left = bin - i;
                 int right = bin + i;
                 if (left >= 0) {
-                    newData[left] += Const.NORMAL_DISTRIBUTION[i];
+                    newData[left] += Const.NORMAL_DISTRIBUTION[i] * scale;
                 }
 
                 if (right < length) {
-                    newData[right] += Const.NORMAL_DISTRIBUTION[i];
+                    newData[right] += Const.NORMAL_DISTRIBUTION[i] * scale;
                 }
 
                 if (left < 0 && right >= length) {

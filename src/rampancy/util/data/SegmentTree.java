@@ -7,8 +7,8 @@ import rampancy.util.RState;
 public class SegmentTree {
     protected Node rootNode;
 
-    public SegmentTree(ArrayList<? extends SegmentFn> segemntFns) {
-        this.rootNode = new Node(0, segemntFns);
+    public SegmentTree(ArrayList<? extends SegmentFn> segemntFns, int splitThreshold) {
+        this.rootNode = new Node(0, segemntFns, splitThreshold);
     }
 
     public Node getSegment(RState state) {
@@ -24,16 +24,17 @@ public class SegmentTree {
         protected ArrayList<? extends SegmentFn> segmentFns;
         protected SegmentFn segmentFn;
 
-        public Node(int depth, ArrayList<? extends SegmentFn> segmentFns) {
-            this(depth, segmentFns, new GuessFactorArray());
+        public Node(int depth, ArrayList<? extends SegmentFn> segmentFns, int splitThreshold) {
+            this(depth, segmentFns, splitThreshold, new GuessFactorArray());
         }
 
-        public Node(int depth, ArrayList<? extends SegmentFn> segmentFns, GuessFactorArray stats) {
+        public Node(int depth, ArrayList<? extends SegmentFn> segmentFns, int splitThreshold, GuessFactorArray stats) {
             this.depth = depth;
             this.children = null;
             this.stats = stats;
             this.segmentFns = segmentFns;
             this.segmentFn = segmentFns.get(depth);
+            this.splitThreshold = splitThreshold;
         }
 
         public Node getSegment(RState state) {
@@ -43,7 +44,7 @@ public class SegmentTree {
             int bin = segmentFn.segment(state);
 
             if (children[bin] == null) {
-                Node child = new Node(depth + 1, segmentFns, stats.copy());
+                Node child = new Node(depth + 1, segmentFns, this.splitThreshold, stats.copy());
                 children[bin] = child;
             }
 

@@ -18,17 +18,22 @@ public class RGunManager implements RDrawable {
     protected HashMap<String, RGun> guns;
     protected RFiringSolution lockedSolution;
     protected ArrayList<RBullet> bullets;
+    protected HashMap<String, REnemy> enemies;
 
     public RGunManager(RampantRobot referenceBot) {
         this.referenceBot = referenceBot;
         this.bullets = new ArrayList<RBullet>();
         this.guns = new HashMap<String, RGun>();
+        this.enemies = new HashMap<String, REnemy>();
     }
 
     public void updateReferenceBot(RampantRobot referenceBot) {
         this.referenceBot = referenceBot;
         this.bullets = new ArrayList<RBullet>();
         this.fireTime = 0;
+        for (RGun gun : this.guns.values()) {
+        	gun.updateReferenceBot(referenceBot);
+        }
     }
 
     public void addGun(RGun gun) {
@@ -37,6 +42,9 @@ public class RGunManager implements RDrawable {
     }
 
     public void update(REnemy enemy) {
+    	if (!this.enemies.containsKey(enemy.name)) {
+    		this.enemies.put(enemy.name, enemy);
+    	}
         for (RGun gun : guns.values()) {
             gun.update(enemy);
         }
@@ -49,6 +57,7 @@ public class RGunManager implements RDrawable {
                 if (shot != null) {
                     RBullet bullet = new RBullet(shot, lockedSolution);
                     bullets.add(bullet);
+                    lockedSolution.gun.shotFired(bullet);
                     lockedSolution = null;
                 }
             }
@@ -64,12 +73,19 @@ public class RGunManager implements RDrawable {
     }
 
     protected void maybeLockFiringSolution() {
+    	REnemy target = this.getTarget();
+    	double desiredPower = this.getDesiredPower(target);
+    	
+    	if (target == null) {
+    		return;
+    	}
+    	
         double maxProbability = -1;
         RFiringSolution maxSolution = null;
 
         List<RFiringSolution> firingSolutions = new ArrayList<RFiringSolution>();
         for (RGun gun : guns.values()) {
-            RFiringSolution solution = gun.firingSolution();
+            RFiringSolution solution = gun.firingSolution(target, desiredPower);
             if (solution != null) {
                 firingSolutions.add(solution);
                 if (solution.hitProbability > maxProbability) {
@@ -84,6 +100,25 @@ public class RGunManager implements RDrawable {
             this.fireTime = this.referenceBot.getTime() + 1;
             this.referenceBot.setTurnGunRightRadians(Utils.normalRelativeAngle(this.lockedSolution.firingAngle));
         }
+    }
+    
+    protected REnemy getTarget() {
+    	if (this.enemies.size() == 1) {
+    		for (REnemy enemy : this.enemies.values()) {
+    			return enemy;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    protected double getDesiredPower(REnemy enemy) {
+    	double energy = this.referenceBot.getEnergy();
+    	if (energy < 30) {
+			return 1.0;
+    	}
+    	
+    	return 2.0;
     }
 
     protected void updateBullets() {

@@ -132,7 +132,7 @@ abstract public class RampantRobot extends AdvancedRobot implements RStateful {
         }
 
         if (movementManager != null) {
-            movementManager.draw(g);
+            // movementManager.draw(g);
         }
     }
 

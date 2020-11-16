@@ -9,8 +9,12 @@ abstract public class RGun {
     public void updateReferenceBot(RampantRobot referenceBot) {
         this.referenceBot = referenceBot;
     }
+    
+    public void shotFired(RBullet bullet) {
+    	// no op by default
+    }
 
     abstract public String name();
     abstract public void update(REnemy enemy);
-    abstract public RFiringSolution firingSolution();
+    abstract public RFiringSolution firingSolution(REnemy enemy, double desiredPower);
 }

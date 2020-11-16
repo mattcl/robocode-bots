@@ -26,7 +26,7 @@ public class RWaveManager implements RDrawable {
         this.waves.add(wave);
     }
 
-    public void maybeAddForEnemy(REnemy enemy) {
+    public boolean maybeAddForEnemy(REnemy enemy) {
         RState state = enemy.currentState();
         if (state != null && state.adjustedDeltaE < 0) {
             if (Math.abs(state.deltaV) < 2) { // TODO better wall hit detection
@@ -45,20 +45,42 @@ public class RWaveManager implements RDrawable {
                         power,
                         state,
                         useableState));
+                    
+                    for (int i = this.waves.size() - 1; i >= 0; i--) {
+                    	if (this.waves.get(i).dummy) {
+                    		this.waves.remove(i);
+                    	}
+                    }
+                    
+                    return true;
                 }
             }
         }
+        
+        return false;
+    }
+    
+    public boolean hasDummyWaves() {
+    	for (RWave wave : this.waves) {
+    		if (wave.dummy) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
-    public void update(long time) {
-        List<RWave> broken = new ArrayList<RWave>();
+    public ArrayList<RWave> update(long time) {
+        ArrayList<RWave> broken = new ArrayList<RWave>();
         for (RWave wave : waves) {
             wave.update(time);
             if (wave.hasBroken(this.referenceBot.location())) {
                 broken.add(wave);
+                wave.broken = true;
             }
         }
         waves.removeAll(broken);
+        return broken;
     }
 
     public RWave getWaveForBullet(Bullet bullet) {
@@ -84,11 +106,13 @@ public class RWaveManager implements RDrawable {
         double closest = Double.POSITIVE_INFINITY;
         RWave closestWave = null;
         for (RWave wave : waves) {
-            double time = wave.timeToImpact(location);
-            if (time < closest) {
-                closest = time;
-                closestWave = wave;
-            }
+        	if (!wave.broken) {
+				double time = wave.timeToImpact(location);
+				if (time < closest) {
+					closest = time;
+					closestWave = wave;
+				}
+        	}
         }
         return closestWave;
     }
